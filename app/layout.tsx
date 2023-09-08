@@ -1,3 +1,5 @@
+import { TodoContextProvider } from "./context/TodoContext"
+
 export default function RootLayout({
   children,
 }: {
@@ -5,7 +7,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <TodoContextProvider>
+          {children}
+        </TodoContextProvider>
+      
+      </body>
     </html>
   )
 }

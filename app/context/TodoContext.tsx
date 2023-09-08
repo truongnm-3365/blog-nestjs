@@ -1,27 +1,10 @@
 "use client"
-import React, { createContext, useState, Key, useContext } from 'react';
-
-export type TodoTypes = {
-    id:Key,
-    title:String,
-    done:Boolean,
-    desc:String
-}
+import React, { createContext, useState, Key, useContext, Dispatch, useReducer, useEffect } from 'react';
+import { todoReducers } from '../reducer/TodoReducer';
+import { TInitialTodoStateType, TTodoActions, TTodoType } from '../types/TodoType';
 
 
-export type FunctionTodoType = {
-    (todo: TodoTypes) : void
-}
-
-
-export interface ITodoContext {
-    todos: TodoTypes[],
-    addTodo:  FunctionTodoType,
-    deleteTodo: FunctionTodoType,
-    onCheckTodo: FunctionTodoType
-}
-
-const data:TodoTypes[] = [
+const data:TTodoType[] = [
     {
       id:1,
       title:"Ăn cơm",
@@ -42,53 +25,36 @@ const data:TodoTypes[] = [
     },
   ]
 
-const DEFAULT_TODO: ITodoContext = {
+  const initialState = {
     todos: data,
-    addTodo: () => {},
-    deleteTodo: () => {},
-    onCheckTodo: () => {}
-};
+  };
 
-const TodoContext = createContext<ITodoContext>(DEFAULT_TODO);
+
+
+//const TodoContext = createContext<ITodoContext>(DEFAULT_TODO);
+
+const TodoContext = createContext<{
+  state: TInitialTodoStateType;
+  dispatch: Dispatch<TTodoActions>;
+}>({
+  state: initialState,
+  dispatch: () => null,
+});
+
+
+const mainReducer = ({ todos }: TInitialTodoStateType, action: TTodoActions) => ({
+  todos: todoReducers(todos, action),
+});
 
 export const TodoContextProvider: React.FC<{ children: any }> = ({ children }) => {
-    const [todos, setTodos] = useState<TodoTypes[]>(data);
+  const [state, dispatch] = useReducer(mainReducer, initialState);
 
-    const addTodo = (todo:TodoTypes) => {
-        setTodos([...todos,todo])
-       
-    }
-    
-      function deleteTodo(todo:TodoTypes){
-        const newTodos = todos.filter(item => item.id !== todo.id)
-        setTodos(newTodos)
-      }
-    
-      function onCheckTodo(todo:TodoTypes) {
-        const newTodos = todos.map(item => {
-          if(item.id === todo.id){
-            item.done = !item.done
-          }
-    
-          return item
-        })
-        setTodos(newTodos)
-      }
-    
-
-    const values: ITodoContext = React.useMemo(
-        () => ({
-            todos,
-            addTodo,
-            deleteTodo,
-            onCheckTodo
-            
-        }),
-        [todos,addTodo,deleteTodo,onCheckTodo],
-    );
-
-    return <TodoContext.Provider value={values}>{children}</TodoContext.Provider>;
+  return <TodoContext.Provider value={{ state, dispatch }}>
+    {children}
+  </TodoContext.Provider>;
 };
 
+
 export default TodoContext;
+
 
