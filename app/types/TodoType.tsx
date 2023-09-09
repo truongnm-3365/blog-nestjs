@@ -4,6 +4,7 @@ export enum TODO_ACTIONS {
     Create = 'CREATE_TODO',
     Delete = 'DELETE_TODO',
     Check = 'CHECK_TODO',
+    Get = 'GET_TODO'
 }
 
 export type TTodoType = {
@@ -14,7 +15,8 @@ export type TTodoType = {
 };
 
 export type TInitialTodoStateType = {
-    todos: TTodoType[];
+    todos: TTodoType[] | any;
+    todo: TTodoType | any
 };
 
 export type TTodoPayload = {
@@ -24,6 +26,8 @@ export type TTodoPayload = {
         done: boolean;
         desc: string;
     };
+
+    [TODO_ACTIONS.Get]: number;
     
     [TODO_ACTIONS.Delete]: {
         id: number;

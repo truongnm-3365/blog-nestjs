@@ -2,26 +2,43 @@
 
 import { TODO_ACTIONS, TTodoActions, TTodoType } from '../types/TodoType';
 
-export const todoReducers = (state: TTodoType[], action: TTodoActions) => {
+export const todoReducers = (state: {todos:[],todo:null}, action: TTodoActions) => {
+    
     switch (action.type) {
 
         case TODO_ACTIONS.Create:
-            return [
-                ...state,
-                action.payload
-            ];
+            return {
+                todo: state.todo,
+                todos : [...state.todos,action.payload]
+            }
+
+        case TODO_ACTIONS.Get:
+            return {
+                todos: state.todos,
+                todo : state.todos[action.payload-1]
+            } 
+           
+                
 
         case TODO_ACTIONS.Delete:
-            return [...state.filter((todo) => todo.id !== action.payload.id)];
+           
+            return {
+                todo: state.todo,
+                todos:[...state.todos.filter((todo: { id: number; }) => todo.id !== action.payload.id)]
+            }
 
         case TODO_ACTIONS.Check:
-            return [...state.map(item => {
-                if(item.id === action.payload.id){
-                  item.done = !item.done
-                }
-          
-                return item
-              })]
+            return {
+                todo: state.todo,
+                todos:[...state.todos.map((item: { id: number; done: boolean; }) => {
+                    if(item.id === action.payload.id){
+                      item.done = !item.done
+                    }
+              
+                    return item
+                  })]
+            } 
+            
 
         default:
             return state;

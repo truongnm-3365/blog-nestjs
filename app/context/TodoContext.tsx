@@ -27,6 +27,7 @@ const data:TTodoType[] = [
 
   const initialState = {
     todos: data,
+    todo: null
   };
 
 
@@ -42,9 +43,7 @@ const TodoContext = createContext<{
 });
 
 
-const mainReducer = ({ todos }: TInitialTodoStateType, action: TTodoActions) => ({
-  todos: todoReducers(todos, action),
-});
+const mainReducer = (state: TInitialTodoStateType, action: TTodoActions) => todoReducers(state, action);
 
 export const TodoContextProvider: React.FC<{ children: any }> = ({ children }) => {
   const [state, dispatch] = useReducer(mainReducer, initialState);
